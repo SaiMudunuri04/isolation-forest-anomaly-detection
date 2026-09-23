@@ -1,0 +1,66 @@
+# Default values for isolation-forest.
+# This is a batch pipeline (train.py / infer.py CLIs), so it deploys as a
+# Kubernetes CronJob — there is intentionally no Deployment or Service.
+
+# Weekly retraining; override for your data-refresh cadence.
+schedule: "0 2 * * 0"
+
+image:
+  # Built and pushed by CI (.github/workflows/ci.yml) on merge to main.
+  repository: ghcr.io/SaiMudunuri04/isolation-forest-anomaly-detection
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
+
+# Runtime settings, exposed to the container as environment variables via
+# the ConfigMap. The job args below reference them as $(VAR).
+config:
+  contamination: "0.02"
+  modelVersion: "1.0.0"
+  # Optional: path (inside the container) to a CSV of telemetry to train on.
+  # Leave empty to train on the bundled synthetic data.
+  dataCsv: ""
+
+# Container command. $(CONTAMINATION) / $(MODEL_VERSION) are substituted by
+# Kubernetes from the ConfigMap env. Append e.g. ["--csv", "$(DATA_CSV)"]
+# via extraArgs when dataCsv is set.
+command: ["python"]
+args: ["train.py", "--contamination", "$(CONTAMINATION)", "--version", "$(MODEL_VERSION)"]
+extraArgs: []
+
+concurrencyPolicy: Forbid
+successfulJobsHistoryLimit: 3
+failedJobsHistoryLimit: 3
+activeDeadlineSeconds: 3600
+backoffLimit: 2
+
+resources:
+  requests:
+    cpu: 500m
+    memory: 1Gi
+  limits:
+    cpu: "4"
+    memory: 4Gi
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 10001
+  runAsGroup: 10001
+  seccompProfile:
+    type: RuntimeDefault
+
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop: [ALL]
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

@@ -1,0 +1,33 @@
+# Argo CD Application — isolation-forest-anomaly-detection
+#
+# GitOps entrypoint: Argo CD watches this repo's Helm chart and syncs it to
+# the cluster automatically (prune + selfHeal).
+#
+# PLACEHOLDERS — adjust for your Argo CD setup:
+#   spec.project             — Argo CD project (default: "default")
+#   spec.source.repoURL      — this git repo (must be registered in Argo CD)
+#   spec.source.targetRevision — "main" tracks the default branch; pin to a
+#                                tag/SHA for immutable releases
+#   spec.destination.server  — Argo CD cluster address; the in-cluster value
+#                              below works when Argo CD runs inside the target
+#                              cluster. For a remote cluster use its API URL.
+#   spec.destination.namespace — target namespace (created automatically)
+#   values (via spec.source.helm) — set schedule, image tag, and
+#     config.contamination / config.modelVersion for your environment.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: isolation-forest-anomaly-detection
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/SaiMudunuri04/isolation-forest-anomaly-detection.git
+    targetRevision: main
+    path: k8s/helm/isolation-forest
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: ml-batch
+  syncPolicy:
+    automated: {prune: true, selfHeal: true}
+    syncOptions: [CreateNamespace=true]

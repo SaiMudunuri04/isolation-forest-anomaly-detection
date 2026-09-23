@@ -1,0 +1,14 @@
+isolation-forest pipeline scheduled.
+
+Release: {{ .Release.Name }} (namespace {{ .Release.Namespace }})
+Image:   {{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}
+Schedule: {{ .Values.schedule }} (cron)
+Contamination: {{ .Values.config.contamination }} | Model version: {{ .Values.config.modelVersion }}
+
+This is a batch pipeline, so it runs as a Kubernetes CronJob (no Service).
+Each run executes: {{ .Values.command }} {{ join " " .Values.args }}
+
+Check runs with:
+
+  kubectl get jobs -n {{ .Release.Namespace }} -l app.kubernetes.io/instance={{ .Release.Name }}
+  kubectl logs -n {{ .Release.Namespace }} -l app.kubernetes.io/instance={{ .Release.Name }} --tail=50
