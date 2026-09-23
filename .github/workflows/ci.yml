@@ -36,5 +36,5 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/SaiMudunuri04/isolation-forest-anomaly-detection:${{ github.sha }}
-            ghcr.io/SaiMudunuri04/isolation-forest-anomaly-detection:latest
+            ghcr.io/saimudunuri04/isolation-forest-anomaly-detection:${{ github.sha }}
+            ghcr.io/saimudunuri04/isolation-forest-anomaly-detection:latest

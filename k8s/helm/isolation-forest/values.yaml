@@ -7,7 +7,7 @@ schedule: "0 2 * * 0"
 
 image:
   # Built and pushed by CI (.github/workflows/ci.yml) on merge to main.
-  repository: ghcr.io/SaiMudunuri04/isolation-forest-anomaly-detection
+  repository: ghcr.io/saimudunuri04/isolation-forest-anomaly-detection
   tag: "latest"
   pullPolicy: IfNotPresent
 
