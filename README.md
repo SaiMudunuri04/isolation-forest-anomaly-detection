@@ -137,7 +137,7 @@ helm template isolation-forest k8s/helm/isolation-forest --namespace ml-batch
 **CI/CD** (`.github/workflows/ci.yml`): on every push to `main` and every
 pull request, CI runs the pytest suite. On merge to `main`, the `publish`
 job builds the Docker image and pushes it to
-`ghcr.io/SaiMudunuri04/isolation-forest-anomaly-detection` (tags: commit
+`ghcr.io/saimudunuri04/isolation-forest-anomaly-detection` (tags: commit
 SHA and `latest`) using `GITHUB_TOKEN` — no extra secrets. Argo CD then
 syncs the new image.
 
